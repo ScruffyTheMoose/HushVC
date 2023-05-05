@@ -1,0 +1,22 @@
+# Ignore Python virtual environment files
+venv/
+*/venv/
+*/.venv/
+
+# Ignore site-packages directory
+Lib/site-packages/
+*/Lib/site-packages/
+*/Lib/site-packages
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+*.ipynb
+
+# etc
+*.pw
+*.vscode
