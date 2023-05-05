@@ -12,7 +12,7 @@ stream_sink = StreamSink()
 
 
 @bot.command()
-async def record(ctx):  # if you're using commands.Bot, this will also work.
+async def join(ctx):  # if you're using commands.Bot, this will also work.
     voice = ctx.author.voice
 
     if not voice:
@@ -41,7 +41,7 @@ async def once_done(sink: discord.sinks, channel: discord.TextChannel, *args):
 
 
 @bot.command()
-async def stop_recording(ctx):
+async def leave(ctx):
     if ctx.guild.id in connections:  # check if the guild is in the cache.
         vc = connections[ctx.guild.id]
         # stop recording, and call the callback (once_done).
