@@ -14,9 +14,12 @@ class StreamSink(Sink):
 
         # user id for parsing their specific audio data
         self.user_id = None
+
+        # obj to store our super sweet awesome audio data
         self.buffer = StreamBuffer()
 
     def write(self, data, user):
+        # we overload the write method to take advantage of the already running thread for recording
 
         # if the data comes from the inviting user, we append it to buffer
         if user == self.user_id:
@@ -53,10 +56,11 @@ class StreamBuffer:
         # min len to pull bytes from buffer
         self.buff_lim = self.bytes_ps * self.block_len
 
-        # temp var for outputting audio
+        # var for tracking order of exported audio
         self.ct = 1
 
-    def write(self, data, user):
+    # will need 'user' param if tracking multiple peoples voices - TBD
+    def write(self, data, user) -> None:
 
         self.byte_buffer += data  # data is a bytearray object
         # checking amount of data in the buffer
@@ -80,5 +84,8 @@ class StreamBuffer:
             self.segment_buffer.put(audio_segment)
 
             # temporary for validating process
-            audio_segment.export(f"output{self.ct}.mp3", format="mp3")
-            self.ct += 1
+            self.export_mp3(audio_segment=audio_segment)
+
+    def export_mp3(self, audio_segment: AudioSegment, directory: str = '') -> None:
+        audio_segment.export(f"{directory}output{self.ct}.mp3", format="mp3")
+        self.ct += 1
