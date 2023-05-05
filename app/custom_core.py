@@ -26,11 +26,11 @@ class StreamSink(Sink):
         self.finished = True
 
     def get_all_audio(self):
-        # not applicable for streaming but will cause errors if not overwritten
+        # not applicable for streaming but may cause errors if not overloaded
         pass
 
     def get_user_audio(self, user):
-        # not applicable for streaming but will cause errors if not overwritten
+        # not applicable for streaming but will def cause errors if not overloaded called
         pass
 
     def set_user(self, user_id: int):
@@ -41,15 +41,16 @@ class StreamSink(Sink):
 class StreamBuffer:
     def __init__(self) -> None:
         # holds byte-form audio data as it builds
-        self.byte_buffer = bytearray()
-        self.segment_buffer = Queue()
+        self.byte_buffer = bytearray()  # bytes
+        self.segment_buffer = Queue()  # pydub.AudioSegments
 
         # audio data specifications
         self.sample_width = 2
         self.channels = 2
         self.sample_rate = 48000
-        self.bytes_ps = 192000
-        self.block_len = 2  # in seconds
+        self.bytes_ps = 192000  # bytes added to buffer per second
+        self.block_len = 2  # how long you want each audio block to be in seconds
+        # min len to pull bytes from buffer
         self.buff_lim = self.bytes_ps * self.block_len
 
         # temp var for outputting audio
@@ -73,7 +74,9 @@ class StreamBuffer:
 
             # removing the old stinky trash data from buffer - ew get it out of there already
             self.byte_buffer = self.byte_buffer[self.buff_lim:]
+            # ok much better now
 
+            # adding AudioSegment to the queue
             self.segment_buffer.put(audio_segment)
 
             # temporary for validating process
