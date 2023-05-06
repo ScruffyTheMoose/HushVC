@@ -4,30 +4,8 @@ import torch
 # Reference:
 # https://huggingface.co/docs/transformers/main/en/model_doc/blenderbot#transformers.BlenderbotForConditionalGeneration
 
-# just an initial test of the model to validate it will work for our use case
-# will build out the rest shortly
-
-model_name = "facebook/blenderbot-400M-distill"
-
-tokenizer = BlenderbotTokenizer.from_pretrained(model_name)
-model = BlenderbotForConditionalGeneration.from_pretrained(model_name)
-
-UTTERANCE = " "
-print("Human: ", UTTERANCE)
-
-inputs = tokenizer.encode(UTTERANCE, return_tensors="pt")
-reply_ids = model.generate(inputs, max_new_tokens=1024)
-print("Bot: ", tokenizer.batch_decode(reply_ids, skip_special_tokens=False)[0])
-
-# this class will use the pretrained model with default configs/weights
-print(inputs)
-print(tokenizer.batch_decode(inputs))
-
 
 class Blenderbot:
-    # static delimiters
-    st = "<s>"  # token id 1
-    en = "</s>"  # token id 2
 
     def __init__(self, model, tokenizer, **kwargs) -> None:
         # model specific things
@@ -36,7 +14,7 @@ class Blenderbot:
         self.kwargs = kwargs
 
         # dialogue management
-        self.tokens = torch.empty(1, 1)
+        self.tokens = torch.empty(1, 1, dtype=torch.long)
         self.max_tokens = 128
 
     def generate(self, input: str) -> str:
@@ -49,7 +27,8 @@ class Blenderbot:
         self.freshen()
 
         # getting output based on newly built context
-        enc_output = self.model.generate(self.tokens)  # using default config
+        enc_output = self.model.generate(
+            self.tokens, max_new_tokens=1024)  # using default config
         # concatenate tokens
         self.update_tokens([enc_output])
 
