@@ -28,7 +28,7 @@ class Blenderbot:
 
         # getting output based on newly built context
         enc_output = self.model.generate(
-            self.tokens, max_new_tokens=1024)  # using default config
+            self.tokens, max_new_tokens=1024, **self.kwargs)  # using default config
         # concatenate tokens
         self.update_tokens([enc_output])
 
